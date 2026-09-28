@@ -124,6 +124,8 @@
   .reveal .artist{color:var(--muted);font-size:15px;margin-bottom:16px}
   .reveal .answer-label{color:var(--muted);font-size:13px;margin-bottom:4px}
   .reveal .answer{font-family:Syne;font-weight:800;font-size:28px;color:var(--gold)}
+  .hints{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+  .hint{background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:13px;color:var(--ink)}
 
   .ask{margin-bottom:16px}
   .ask p{text-align:center;color:var(--muted);font-size:14px;margin-bottom:12px}
@@ -179,10 +181,12 @@
         <label>Client ID de ton app Spotify</label>
         <input id="clientId" placeholder="colle ici le Client ID" autocomplete="off">
       </div>
-      <label style="font-size:13px;color:var(--muted)">Redirect URI à déclarer dans ton app Spotify (copie exacte) :</label>
-      <div class="redirect-box">
-        <span id="redirectVal"></span>
-        <button class="copy" id="copyRedirect">Copier</button>
+      <div id="redirectWrap">
+        <label style="font-size:13px;color:var(--muted)">Redirect URI à déclarer dans ton app Spotify (copie exacte) :</label>
+        <div class="redirect-box">
+          <span id="redirectVal"></span>
+          <button class="copy" id="copyRedirect">Copier</button>
+        </div>
       </div>
       <button class="sp-btn" id="loginBtn">Se connecter à Spotify</button>
       <p class="sub" style="margin:14px 0 0" id="connErr"></p>
@@ -223,6 +227,7 @@
 
       <div class="listen-len" id="listenLen"></div>
       <div class="player-controls" id="controls"></div>
+      <div class="hints" id="hintBox"></div>
 
       <div class="reveal hidden" id="reveal">
         <div class="song-title" id="rTitle"></div>
@@ -232,7 +237,10 @@
       </div>
     </div>
 
-    <button class="secondary" id="revealBtn">Révéler le fil rouge</button>
+    <div class="row-btns">
+      <button class="secondary" id="hintBtn">💡 Indice</button>
+      <button class="secondary" id="revealBtn">Révéler le fil rouge</button>
+    </div>
 
     <div class="ask hidden" id="ask">
       <p>Qui a trouvé le premier ?</p>
@@ -323,20 +331,20 @@ const THEMES = [
     { t:"Fox on the Run", a:"Sweet", r:"Le renard" },
   ]},
   { name:"Villes & lieux", songs:[
-    { t:"New York, New York", a:"Frank Sinatra", r:"New York" },
-    { t:"Barcelona", a:"Freddie Mercury", r:"Barcelone" },
-    { t:"Amsterdam", a:"Jacques Brel", r:"Amsterdam" },
-    { t:"Africa", a:"Toto", r:"L'Afrique" },
-    { t:"Aux Champs-Élysées", a:"Joe Dassin", r:"Paris" },
-    { t:"Sweet Home Alabama", a:"Lynyrd Skynyrd", r:"L'Alabama" },
-    { t:"Viva Las Vegas", a:"Elvis Presley", r:"Las Vegas" },
-    { t:"Hotel California", a:"Eagles", r:"La Californie" },
-    { t:"California Dreamin'", a:"The Mamas & the Papas", r:"La Californie" },
-    { t:"L'Amérique", a:"Joe Dassin", r:"L'Amérique" },
-    { t:"Göttingen", a:"Barbara", r:"Göttingen" },
-    { t:"Empire State of Mind", a:"Alicia Keys", r:"New York" },
-    { t:"Kingston Town", a:"UB40", r:"Kingston" },
-    { t:"Living in America", a:"James Brown", r:"L'Amérique" },
+    { t:"New York, New York", a:"Frank Sinatra", r:"New York", c:"une ville" },
+    { t:"Barcelona", a:"Freddie Mercury", r:"Barcelone", c:"une ville" },
+    { t:"Amsterdam", a:"Jacques Brel", r:"Amsterdam", c:"une ville" },
+    { t:"Africa", a:"Toto", r:"L'Afrique", c:"un continent" },
+    { t:"Aux Champs-Élysées", a:"Joe Dassin", r:"Paris", c:"une ville" },
+    { t:"Sweet Home Alabama", a:"Lynyrd Skynyrd", r:"L'Alabama", c:"un État américain" },
+    { t:"Viva Las Vegas", a:"Elvis Presley", r:"Las Vegas", c:"une ville" },
+    { t:"Hotel California", a:"Eagles", r:"La Californie", c:"un État américain" },
+    { t:"California Dreamin'", a:"The Mamas & the Papas", r:"La Californie", c:"un État américain" },
+    { t:"L'Amérique", a:"Joe Dassin", r:"L'Amérique", c:"un continent" },
+    { t:"Göttingen", a:"Barbara", r:"Göttingen", c:"une ville" },
+    { t:"Empire State of Mind", a:"Alicia Keys", r:"New York", c:"une ville" },
+    { t:"Kingston Town", a:"UB40", r:"Kingston", c:"une ville" },
+    { t:"Living in America", a:"James Brown", r:"L'Amérique", c:"un continent" },
   ]},
   { name:"Nombres", songs:[
     { t:"Seven Nation Army", a:"The White Stripes", r:"Sept" },
@@ -393,15 +401,15 @@ const THEMES = [
   ]},
   { name:"Argent", songs:[
     { t:"Money", a:"Pink Floyd", r:"L'argent" },
-    { t:"Money, Money, Money", a:"ABBA", r:"L'argent" },
-    { t:"Money for Nothing", a:"Dire Straits", r:"L'argent" },
-    { t:"Can't Buy Me Love", a:"The Beatles", r:"L'argent" },
-    { t:"Gold Digger", a:"Kanye West", r:"L'or" },
-    { t:"Price Tag", a:"Jessie J", r:"L'argent" },
-    { t:"Material Girl", a:"Madonna", r:"L'argent" },
-    { t:"Billionaire", a:"Travie McCoy", r:"Le milliardaire" },
-    { t:"Rich Girl", a:"Hall & Oates", r:"La richesse" },
-    { t:"If I Had $1000000", a:"Barenaked Ladies", r:"Le million" },
+    { t:"Gold", a:"Spandau Ballet", r:"L'or" },
+    { t:"Diamonds", a:"Rihanna", r:"Les diamants" },
+    { t:"Billionaire", a:"Travie McCoy", r:"Un milliardaire" },
+    { t:"If I Had $1000000", a:"Barenaked Ladies", r:"Un million" },
+    { t:"Penny Lane", a:"The Beatles", r:"Un penny (une pièce)" },
+    { t:"Bills, Bills, Bills", a:"Destiny's Child", r:"Les factures" },
+    { t:"Price Tag", a:"Jessie J", r:"Le prix" },
+    { t:"Rich Girl", a:"Hall & Oates", r:"Riche" },
+    { t:"Material Girl", a:"Madonna", r:"Matérielle" },
   ]},
   { name:"Voiture & route", songs:[
     { t:"Route 66", a:"Chuck Berry", r:"La route 66" },
@@ -446,6 +454,7 @@ const COLORS = ["#ffc24b","#ff5c8a","#5ad1c4","#9d8bff","#ff9d5c","#7ee081"];
 const SAVE_KEY = "filrouge_sp_state_v3";
 const HIST_KEY = "filrouge_hist_v1";
 const TEAMS_KEY = "filrouge_teams_v1";
+const CLIENT_ID = "95e0e51abab1436c9666ed42b866f3e5"; // Client ID de l'app Spotify (public, pas secret)
 const SCOPES = "streaming user-read-email user-read-private user-modify-playback-state user-read-playback-state";
 // Point de départ de l'extrait selon la durée (part du morceau ; 0 = début). Ajuste librement.
 const START_PCT = { 15:1/3, 30:1/3, 0:0 };
@@ -458,7 +467,7 @@ let listenSec = 15;
 let clientId = "";
 let token = null, tokenExp = 0;
 let player = null, deviceId = null, sdkLoaded = false;
-let listenTimer = null, barTimer = null, playing = false, revealed = false;
+let listenTimer = null, barTimer = null, playing = false, revealed = false, hintLevel = 0;
 let history = { played:{}, themesDone:[] };
 
 const $ = id => document.getElementById(id);
@@ -525,8 +534,8 @@ function storeToken(d){
     if(d.refresh_token) localStorage.setItem('sp_refresh',d.refresh_token); }catch(e){}
 }
 async function login(){
-  clientId=$("clientId").value.trim();
-  if(!clientId){ $("connErr").textContent="Colle d'abord le Client ID."; return; }
+  clientId=CLIENT_ID || $("clientId").value.trim();
+  if(!clientId){ $("connErr").textContent="Client ID manquant."; return; }
   try{ localStorage.setItem('sp_client',clientId); }catch(e){}
   const verifier=randString(96);
   try{ localStorage.setItem('sp_verifier',verifier); }catch(e){}
@@ -539,7 +548,7 @@ async function handleRedirect(){
   const p=new URLSearchParams(location.search);
   if(p.get('error')){ $("connErr").textContent="Autorisation refusée : "+p.get('error'); history_replace(); return false; }
   const code=p.get('code'); if(!code) return false;
-  clientId=localStorage.getItem('sp_client')||"";
+  clientId=CLIENT_ID || localStorage.getItem('sp_client')||"";
   const verifier=localStorage.getItem('sp_verifier')||"";
   const body=new URLSearchParams({ client_id:clientId, grant_type:'authorization_code',
     code, redirect_uri:redirectUri(), code_verifier:verifier });
@@ -553,7 +562,7 @@ async function handleRedirect(){
 }
 function history_replace(){ try{ window.history.replaceState({}, '', redirectUri()); }catch(e){} }
 async function refreshToken(){
-  const rt=localStorage.getItem('sp_refresh'); clientId=localStorage.getItem('sp_client')||clientId;
+  const rt=localStorage.getItem('sp_refresh'); clientId=CLIENT_ID||localStorage.getItem('sp_client')||clientId;
   if(!rt||!clientId) return false;
   try{
     const body=new URLSearchParams({ client_id:clientId, grant_type:'refresh_token', refresh_token:rt });
@@ -714,14 +723,28 @@ function showPlay(){
   renderScores(); stopPlay();
   setStatus(songIdx===0 ? "Nouveau thème : "+rounds[roundIdx].themeName : "Prêt à jouer");
   renderListenLen(); renderControls(); revealed=false;
+  hintLevel=0; $("hintBox").innerHTML=""; $("hintBtn").disabled=false;
   $("reveal").classList.add("hidden"); $("ask").classList.add("hidden");
   $("nextRow").classList.add("hidden"); $("revealBtn").classList.remove("hidden");
 }
+function hintsFor(s){
+  const arr=[];
+  const wtxt={titre:"dans le titre",paroles:"dans les paroles",artiste:"dans le nom de l'artiste"}[s.w||"titre"];
+  arr.push("Le fil rouge se cache "+wtxt+".");
+  if(s.c) arr.push("C'est "+s.c+".");
+  return arr;
+}
+function renderHints(){
+  const arr=hintsFor(curSong()); const box=$("hintBox"); box.innerHTML="";
+  for(let i=0;i<hintLevel;i++){ const d=document.createElement("div"); d.className="hint"; d.textContent="💡 "+arr[i]; box.appendChild(d); }
+  $("hintBtn").disabled = hintLevel>=arr.length;
+}
+$("hintBtn").onclick=()=>{ const arr=hintsFor(curSong()); if(hintLevel<arr.length){ hintLevel++; renderHints(); } };
 function revealAnswer(){
   if(revealed) return; revealed=true;
   const s=curSong();
   $("rTitle").textContent=s.t; $("rArtist").textContent=s.a; $("rAnswer").textContent=s.r;
-  $("reveal").classList.remove("hidden"); $("revealBtn").classList.add("hidden");
+  $("reveal").classList.remove("hidden"); $("revealBtn").classList.add("hidden"); $("hintBtn").disabled=true;
   renderAward(); $("ask").classList.remove("hidden");
 }
 $("revealBtn").onclick=revealAnswer;
@@ -783,8 +806,10 @@ async function boot(){
   renderTeams();
   $("redirectVal").textContent=redirectUri();
   if(location.protocol==="file:") $("fileWarn").classList.remove("hidden");
-  clientId=localStorage.getItem('sp_client')||"";
-  if(clientId) $("clientId").value=clientId;
+  clientId=CLIENT_ID || localStorage.getItem('sp_client')||"";
+  if(!CLIENT_ID && clientId) $("clientId").value=clientId;
+  if(CLIENT_ID){ const cf=$("clientId").closest(".field"); if(cf) cf.style.display="none";
+    const rw=$("redirectWrap"); if(rw) rw.style.display="none"; }
 
   let authed=false;
   if(location.search.indexOf("code=")>=0 || location.search.indexOf("error=")>=0){ authed=await handleRedirect(); }
