@@ -250,6 +250,7 @@
     <div class="row-btns hidden" id="nextRow">
       <button class="primary" id="nextBtn">Chanson suivante</button>
     </div>
+    <div class="footlinks"><button id="quitGame">Quitter la partie</button></div>
   </section>
 
   <!-- ===== END ===== -->
@@ -789,8 +790,10 @@ function showEnd(){
       <span class="nm">${t.name}</span><span class="pts">${t.pts}</span>`; rank.appendChild(row); });
 }
 $("replaySame").onclick=beginGame;
-$("newGame").onclick=async()=>{ clearSave(); await stopPlay(); phase="setup"; rounds=[]; roundIdx=0; songIdx=0;
-  teams.forEach(t=>t.pts=0); showScreen("setup"); };
+async function goHome(){ clearSave(); await stopPlay(); phase="setup"; rounds=[]; roundIdx=0; songIdx=0;
+  teams.forEach(t=>t.pts=0); renderTeams(); showScreen("setup"); }
+$("newGame").onclick=goHome;
+$("quitGame").onclick=()=>{ if(confirm("Quitter la partie en cours ? Les scores seront perdus.")) goHome(); };
 $("logout1").onclick=logout;
 
 /* ---------- connexion : UI ---------- */
