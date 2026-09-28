@@ -57,6 +57,7 @@
   .rand-btn{background:var(--magenta);color:#fff;font-weight:700;font-size:16px;width:100%;
     padding:14px;border-radius:13px;margin-bottom:16px}
   .rand-btn:hover{filter:brightness(1.07)}
+  .btn-sub{display:block;font-weight:400;font-size:12.5px;opacity:.85;margin-top:3px}
   .or{color:var(--muted);font-size:13px;text-align:center;margin-bottom:14px}
   .themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
   .theme{background:var(--surface2);border:1px solid var(--line);border-radius:13px;
@@ -202,11 +203,16 @@
     </div>
     <div class="card">
       <h2>La partie</h2>
-      <p class="sub">3 thèmes surprise, 6 chansons chacun — score cumulé. Pas de répétition d'une partie à l'autre.</p>
-      <button class="rand-btn" id="startBtn">🎲 Lancer la partie</button>
+      <p class="sub">En équipes, avec des points. 3 fils rouges tirés au hasard, score cumulé.</p>
+      <button class="rand-btn" id="startBtn">🎲 Lancer une partie<span class="btn-sub">3 fils rouges de 6 musiques</span></button>
+    </div>
+    <div class="card">
+      <h2>Jouer un seul fil rouge</h2>
+      <p class="sub">Sans équipe ni points — juste écouter et deviner (6 musiques).</p>
+      <div class="themes" id="soloGrid"></div>
     </div>
     <div class="footlinks">
-      <button id="resetHist">Réinitialiser l'historique (thèmes / musiques déjà passés)</button>
+      <button id="resetHist">Réinitialiser l'historique (fils rouges / musiques déjà passés)</button>
       <button id="logout1">Se déconnecter de Spotify</button>
     </div>
   </section>
@@ -214,12 +220,13 @@
   <!-- ===== PLAY ===== -->
   <section id="play" class="hidden">
     <div class="topbar">
-      <div class="theme-live">Thème<b id="liveTheme"></b></div>
+      <div class="theme-live">Fil rouge<b id="liveTheme"></b></div>
       <div class="progress" id="progress"></div>
     </div>
     <div class="scores" id="scores"></div>
 
-    <div class="stage">      <div class="song-num" id="songNum"></div>
+    <div class="stage">
+      <div class="song-num" id="songNum"></div>
 
       <div class="disc-wrap"><div class="disc" id="disc"></div></div>
       <div class="bar"><i id="barFill"></i></div>
@@ -232,14 +239,14 @@
       <div class="reveal hidden" id="reveal">
         <div class="song-title" id="rTitle"></div>
         <div class="artist" id="rArtist"></div>
-        <div class="answer-label">Le fil rouge de cette chanson</div>
+        <div class="answer-label">La réponse</div>
         <div class="answer" id="rAnswer"></div>
       </div>
     </div>
 
     <div class="row-btns">
       <button class="secondary" id="hintBtn">💡 Indice</button>
-      <button class="secondary" id="revealBtn">Révéler le fil rouge</button>
+      <button class="secondary" id="revealBtn">Révéler la réponse</button>
     </div>
 
     <div class="ask hidden" id="ask">
@@ -248,7 +255,7 @@
     </div>
 
     <div class="row-btns hidden" id="nextRow">
-      <button class="primary" id="nextBtn">Chanson suivante</button>
+      <button class="primary" id="nextBtn">Titre suivant</button>
     </div>
     <div class="footlinks"><button id="quitGame">Quitter la partie</button></div>
   </section>
@@ -262,14 +269,14 @@
       <div class="rank" id="rank"></div>
       <div class="row-btns">
         <button class="secondary" id="newGame">Accueil</button>
-        <button class="primary" id="replaySame">Rejouer (3 thèmes)</button>
+        <button class="primary" id="replaySame">Rejouer</button>
       </div>
     </div>
   </section>
 
   <p class="foot">
     Morceaux entiers via Spotify — le titre n'est jamais affiché.<br>
-    Un DJ lance, tout le monde devine ce qui relie la chanson au thème.
+    Un DJ lance, tout le monde cherche la réponse.
   </p>
 </div>
 
@@ -463,7 +470,7 @@ const ROUND = 6;        // chansons par thème
 const GAME_THEMES = 3;  // thèmes par partie
 
 let teams = [ {name:"Équipe 1", pts:0}, {name:"Équipe 2", pts:0} ];
-let rounds = [], roundIdx = 0, songIdx = 0, phase = "setup";
+let rounds = [], roundIdx = 0, songIdx = 0, phase = "setup", mode = "game";
 let listenSec = 15;
 let clientId = "";
 let token = null, tokenExp = 0;
@@ -510,13 +517,13 @@ function drawGame(){
 }
 
 /* ---------- persistance de la partie ---------- */
-function save(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify({teams,rounds,roundIdx,songIdx,phase,listenSec})); }catch(e){} }
+function save(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify({teams,rounds,roundIdx,songIdx,phase,listenSec,mode})); }catch(e){} }
 function loadGame(){
   try{
     const s=JSON.parse(localStorage.getItem(SAVE_KEY));
     if(s){ if(typeof s.listenSec==="number") listenSec=s.listenSec;
       if(s.phase==="playing" && s.rounds && s.rounds.length){
-        teams=s.teams; rounds=s.rounds; roundIdx=s.roundIdx||0; songIdx=s.songIdx||0; phase="playing"; return true; } }
+        teams=s.teams; rounds=s.rounds; roundIdx=s.roundIdx||0; songIdx=s.songIdx||0; mode=s.mode||"game"; phase="playing"; return true; } }
   }catch(e){}
   return false;
 }
@@ -707,31 +714,62 @@ function renderTeams(){
   list.querySelectorAll("[data-del]").forEach(b=>{ b.onclick=e=>{ teams.splice(+e.target.dataset.del,1); saveTeams(); renderTeams(); }; });
 }
 function beginGame(){
-  teams.forEach(t=>t.pts=0);
+  mode="game"; teams.forEach(t=>t.pts=0);
   drawGame(); phase="playing"; save();
   initPlayer(); showPlay();
+}
+function randThemeIdx(){
+  const notDone=THEMES.map((t,i)=>i).filter(i=>!history.themesDone.includes(THEMES[i].name));
+  const pool=notDone.length?notDone:THEMES.map((t,i)=>i);
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+function beginSolo(idx){
+  mode="solo";
+  rounds=[{themeIdx:idx, themeName:THEMES[idx].name, songs:drawRound(idx)}];
+  roundIdx=0; songIdx=0; phase="playing"; save();
+  initPlayer(); showPlay();
+}
+function renderSoloGrid(){
+  const grid=$("soloGrid"); grid.innerHTML="";
+  const rnd=document.createElement("button"); rnd.className="theme";
+  rnd.innerHTML=`<div class="t-name">🎲 Aléatoire</div><div class="t-count">un fil rouge au hasard</div>`;
+  rnd.onclick=()=>beginSolo(randThemeIdx());
+  grid.appendChild(rnd);
+  THEMES.forEach((th,i)=>{
+    const el=document.createElement("button"); el.className="theme";
+    el.innerHTML=`<div class="t-name">${th.name}</div><div class="t-count">${th.songs.length} titres</div>`;
+    el.onclick=()=>beginSolo(i);
+    grid.appendChild(el);
+  });
 }
 $("addTeam").onclick=()=>{ if(teams.length<6){ teams.push({name:"Équipe "+(teams.length+1),pts:0}); saveTeams(); renderTeams(); } };
 $("startBtn").onclick=beginGame;
 $("resetHist").onclick=()=>{ resetHistory(); $("resetHist").textContent="Historique réinitialisé ✓";
-  setTimeout(()=>$("resetHist").textContent="Réinitialiser l'historique (thèmes / musiques déjà passés)",1600); };
+  setTimeout(()=>$("resetHist").textContent="Réinitialiser l'historique (fils rouges / musiques déjà passés)",1600); };
 
 function showPlay(){
   showScreen("play");
+  const solo = mode==="solo";
   $("liveTheme").textContent=rounds[roundIdx].themeName;
-  $("progress").textContent=`Thème ${roundIdx+1}/${rounds.length} · Chanson ${songIdx+1}/${curSongs().length}`;
-  $("songNum").textContent=`Chanson n°${songIdx+1}`;
+  $("progress").textContent = solo
+    ? `Titre ${songIdx+1}/${curSongs().length}`
+    : `Fil rouge ${roundIdx+1}/${rounds.length} · Titre ${songIdx+1}/${curSongs().length}`;
+  $("songNum").textContent=`Titre n°${songIdx+1}`;
+  $("scores").classList.toggle("hidden", solo);
   renderScores(); stopPlay();
-  setStatus(songIdx===0 ? "Nouveau thème : "+rounds[roundIdx].themeName : "Prêt à jouer");
+  setStatus(songIdx===0
+    ? (solo ? "Fil rouge : "+rounds[roundIdx].themeName : "Nouveau fil rouge : "+rounds[roundIdx].themeName)
+    : "Prêt à jouer");
   renderListenLen(); renderControls(); revealed=false;
   hintLevel=0; $("hintBox").innerHTML=""; $("hintBtn").disabled=false;
   $("reveal").classList.add("hidden"); $("ask").classList.add("hidden");
   $("nextRow").classList.add("hidden"); $("revealBtn").classList.remove("hidden");
+  $("quitGame").textContent = solo ? "Quitter le fil rouge" : "Quitter la partie";
 }
 function hintsFor(s){
   const arr=[];
   const wtxt={titre:"dans le titre",paroles:"dans les paroles",artiste:"dans le nom de l'artiste"}[s.w||"titre"];
-  arr.push("Le fil rouge se cache "+wtxt+".");
+  arr.push("La réponse se cache "+wtxt+".");
   if(s.c) arr.push("C'est "+s.c+".");
   return arr;
 }
@@ -746,9 +784,17 @@ function revealAnswer(){
   const s=curSong();
   $("rTitle").textContent=s.t; $("rArtist").textContent=s.a; $("rAnswer").textContent=s.r;
   $("reveal").classList.remove("hidden"); $("revealBtn").classList.add("hidden"); $("hintBtn").disabled=true;
-  renderAward(); $("ask").classList.remove("hidden");
+  if(mode==="solo"){ showNext(); }
+  else { renderAward(); $("ask").classList.remove("hidden"); }
 }
 $("revealBtn").onclick=revealAnswer;
+function showNext(){
+  $("nextRow").classList.remove("hidden");
+  const lastSong=songIdx>=curSongs().length-1;
+  const lastTheme=roundIdx>=rounds.length-1;
+  if(mode==="solo") $("nextBtn").textContent = lastSong ? "Terminé" : "Titre suivant";
+  else $("nextBtn").textContent = lastSong ? (lastTheme ? "Voir le classement" : "Fil rouge suivant") : "Titre suivant";
+}
 function renderAward(){
   const box=$("award"); box.innerHTML="";
   teams.forEach((tm,i)=>{ const b=document.createElement("button");
@@ -758,16 +804,12 @@ function renderAward(){
   box.appendChild(none);
 }
 function afterAward(){
-  renderScores(); $("ask").classList.add("hidden"); $("nextRow").classList.remove("hidden");
-  const lastSong=songIdx>=curSongs().length-1;
-  const lastTheme=roundIdx>=rounds.length-1;
-  $("nextBtn").textContent = lastSong ? (lastTheme ? "Voir le classement" : "Thème suivant") : "Chanson suivante";
-  save();
+  renderScores(); $("ask").classList.add("hidden"); showNext(); save();
 }
 $("nextBtn").onclick=async()=>{
   await stopPlay();
   if(songIdx < curSongs().length-1){ songIdx++; save(); showPlay(); }
-  else if(roundIdx < rounds.length-1){ roundIdx++; songIdx=0; save(); showPlay(); }
+  else if(mode==="game" && roundIdx < rounds.length-1){ roundIdx++; songIdx=0; save(); showPlay(); }
   else { phase="end"; save(); showEnd(); }
 };
 function showScreen(name){ ["connect","setup","play","end"].forEach(s=>$(s).classList.toggle("hidden",s!==name)); }
@@ -779,7 +821,17 @@ function renderScores(){
 }
 function showEnd(){
   showScreen("end");
-  $("playedThemes").textContent="Thèmes : "+rounds.map(r=>r.themeName).join(", ");
+  if(mode==="solo"){
+    $("end").querySelector("h2").textContent="Fil rouge terminé";
+    $("winner").textContent=rounds[0].themeName;
+    $("playedThemes").textContent="";
+    $("rank").innerHTML="";
+    $("replaySame").textContent="Rejouer ce fil rouge";
+    return;
+  }
+  $("end").querySelector("h2").textContent="Partie terminée";
+  $("replaySame").textContent="Rejouer";
+  $("playedThemes").textContent="Fils rouges : "+rounds.map(r=>r.themeName).join(", ");
   const ordered=teams.map((t,i)=>({...t,ci:i})).sort((a,b)=>b.pts-a.pts);
   const top=ordered[0].pts, winners=ordered.filter(t=>t.pts===top);
   $("winner").textContent=winners.length>1?"Égalité !":ordered[0].name+" gagne";
@@ -789,7 +841,7 @@ function showEnd(){
       <span class="swatch" style="background:${COLORS[t.ci%COLORS.length]}"></span>
       <span class="nm">${t.name}</span><span class="pts">${t.pts}</span>`; rank.appendChild(row); });
 }
-$("replaySame").onclick=beginGame;
+$("replaySame").onclick=()=>{ if(mode==="solo") beginSolo(rounds[0].themeIdx); else beginGame(); };
 async function goHome(){ clearSave(); await stopPlay(); phase="setup"; rounds=[]; roundIdx=0; songIdx=0;
   teams.forEach(t=>t.pts=0); renderTeams(); showScreen("setup"); }
 $("newGame").onclick=goHome;
@@ -806,7 +858,7 @@ $("loginBtn").onclick=login;
    ============================================================ */
 async function boot(){
   loadHistory(); loadTeams();
-  renderTeams();
+  renderTeams(); renderSoloGrid();
   $("redirectVal").textContent=redirectUri();
   if(location.protocol==="file:") $("fileWarn").classList.remove("hidden");
   clientId=CLIENT_ID || localStorage.getItem('sp_client')||"";
