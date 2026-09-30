@@ -20,6 +20,7 @@ En ligne : https://benoitouiddoo.github.io/Fil-Rouge/
 - **Anti-répétition** : les fils rouges et musiques déjà joués ne reviennent pas tant qu'un fil rouge
   n'est pas épuisé (historique par appareil, réinitialisable depuis l'accueil).
 - **Réglages** (mémorisés par appareil) : **niveau** Facile / Moyen / Difficile et **genres** (Pop, Rock, Variété française, Rap, Soul/Funk/R&B, Disco/Électro, Jazz & crooners, Folk/country/reggae/BO). Ce sont des **priorités** : les titres correspondants sortent d'abord, le reste complète la manche.
+- **Bouton retour** (téléphone / navigateur) : en jeu, demande confirmation puis revient à l'accueil ; en fin de partie, revient à l'accueil (ne quitte plus le site).
 - Noms d'équipe mémorisés par appareil. Lien *Quitter la partie* en cours de jeu.
 
 ## Héberger (GitHub Pages)
