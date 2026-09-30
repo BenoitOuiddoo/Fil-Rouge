@@ -60,11 +60,11 @@ Tout est dans la constante `THEMES` en haut du `<script>` de `index.html` :
 | `w` | où se cache la réponse : `titre` / `paroles` / `artiste` (défaut `titre`) | non |
 | `c` | catégorie affichée au 2ᵉ indice (ex. « une ville ») | non |
 | `q` | recherche Spotify exacte, pour forcer une version (éviter live / remix) | non |
-| `d` | niveau : 1 facile · 2 moyen · 3 difficile (popularité Deezer : ≥ 650 000 / ≥ 400 000 / en dessous) | non (défaut 2) |
+| `d` | niveau : 1 facile · 2 moyen · 3 difficile (rang Deezer : ≥ 800 000 / 600 000–800 000 / en dessous) | non (défaut 2) |
 | `g` | genre : `pop` `rock` `variete` `rap` `soul` `electro` `jazz` `autres` (attribué par artiste) | non (défaut `pop`) |
 
 Règles de contenu : **au moins 6 réponses différentes** par fil rouge et **chaque chanson vérifiée**
-(existence + bon artiste) avant ajout. Une même réponse peut apparaître plusieurs fois dans le pool :
+(existence + bon artiste) avant ajout, et **rang Deezer ≥ 500 000** (sauf variété française). Une même réponse peut apparaître plusieurs fois dans le pool :
 le tirage (`pickDistinct`) garantit qu'elle ne sort **qu'une fois par fil rouge joué**.
 
 ## Limites connues
