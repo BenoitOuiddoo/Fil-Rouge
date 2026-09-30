@@ -425,6 +425,10 @@ const THEMES = [
     { t:"La pluie", a:"Orelsan", r:"La pluie", d:1, g:"variete" },
     { t:"L'orage", a:"Georges Brassens", r:"L'orage", d:2, g:"variete" },
     { t:"Au soleil", a:"Jenifer", r:"Le soleil", d:2, g:"variete" },
+    { t:"Do You Want to Build a Snowman?", a:"Kristen Bell", r:"La neige (bonhomme de neige)", d:3, g:"autres" },
+    { t:"Singin' in the Rain", a:"Gene Kelly", r:"La pluie", d:3, g:"autres" },
+    { t:"Over the Rainbow", a:"Judy Garland", r:"L'arc-en-ciel", d:3, g:"autres" },
+    { t:"Colors of the Wind", a:"Vanessa Williams", r:"Le vent", d:3, g:"autres" },
   ]},
   { name:"Parties du corps", songs:[
     { t:"Total Eclipse of the Heart", a:"Bonnie Tyler", r:"Le cœur", d:2, g:"rock" },
@@ -464,7 +468,6 @@ const THEMES = [
     { t:"Les sucettes", a:"France Gall", r:"Les sucettes", d:3, g:"variete" },
   ]},
   { name:"Argent", songs:[
-    { t:"Money", a:"Pink Floyd", r:"L'argent", d:1, g:"rock" },
     { t:"Gold", a:"Spandau Ballet", r:"L'or", d:2, g:"pop" },
     { t:"Diamonds", a:"Rihanna", r:"Les diamants", d:1, g:"pop" },
     { t:"Billionaire", a:"Travie McCoy", r:"Un milliardaire", d:2, g:"rap" },
@@ -473,6 +476,8 @@ const THEMES = [
     { t:"Price Tag", a:"Jessie J", r:"Le prix", d:3, g:"pop" },
     { t:"Material Girl", a:"Madonna", r:"Matérielle", d:2, g:"pop" },
     { t:"Ring of Fire", a:"Johnny Cash", r:"Le cash", w:"artiste", d:2, g:"autres" },
+    { t:"Gold Digger", a:"Kanye West", r:"La chercheuse d'or", d:1, g:"rap" },
+    { t:"If I Were a Rich Man", a:"Topol", r:"Riche", d:3, g:"autres" },
   ]},
   { name:"Moyens de transport", songs:[
     { t:"Bicycle Race", a:"Queen", r:"Le vélo", d:2, g:"rock" },
@@ -503,7 +508,6 @@ const THEMES = [
     { t:"Étoile des neiges", a:"Line Renaud", r:"L'étoile", d:3, g:"variete" },
     { t:"Drops of Jupiter", a:"Train", r:"Jupiter", d:2, g:"pop" },
     { t:"Venus", a:"Shocking Blue", r:"Vénus", d:2, g:"pop" },
-    { t:"Mr. Blue Sky", a:"Electric Light Orchestra", r:"Le ciel", d:1, g:"rock" },
     { t:"Space Oddity", a:"David Bowie", r:"L'espace", d:1, g:"rock" },
     { t:"Supermassive Black Hole", a:"Muse", r:"Le trou noir", d:1, g:"rock" },
     { t:"Eclipse", a:"Pink Floyd", r:"L'éclipse", d:2, g:"rock" },
@@ -567,6 +571,7 @@ const THEMES = [
     { t:"Hells Bells", a:"AC/DC", r:"La cloche", d:1, g:"rock" },
     { t:"Trumpets", a:"Jason Derulo", r:"La trompette", d:2, g:"pop" },
     { t:"4 mots sur un piano", a:"Patrick Fiori", r:"Le piano", d:1, g:"variete" },
+    { t:"Dueling Banjos", a:"Eric Weissberg", r:"Le banjo", d:3, g:"autres" },
   ]},
   { name:"Famille", songs:[
     { t:"Father and Son", a:"Cat Stevens", r:"Le père (et le fils)", d:2, g:"autres" },
@@ -578,12 +583,10 @@ const THEMES = [
     { t:"Sister Golden Hair", a:"America", r:"La sœur", d:2, g:"rock" },
     { t:"Daughter", a:"Pearl Jam", r:"La fille", d:2, g:"rock" },
     { t:"Uncle Albert/Admiral Halsey", a:"Paul McCartney", r:"L'oncle", d:3, g:"rock" },
-    { t:"We Are Family", a:"Sister Sledge", r:"La famille", d:2, g:"soul" },
     { t:"Maman", a:"Louane", r:"Maman", d:1, g:"variete" },
     { t:"La mamma", a:"Charles Aznavour", r:"La mamma", d:2, g:"variete" },
     { t:"Mon fils ma bataille", a:"Daniel Balavoine", r:"Le fils", d:1, g:"variete" },
     { t:"Mon frère", a:"Maxime Le Forestier", r:"Le frère", d:3, g:"variete" },
-    { t:"Famille", a:"Jean-Jacques Goldman", r:"La famille", d:2, g:"variete" },
     { t:"Le petit garçon", a:"Serge Reggiani", r:"Le petit garçon", d:3, g:"variete" },
   ]},
   { name:"Éléments & nature", songs:[
@@ -634,7 +637,6 @@ const THEMES = [
     { t:"Eight Days a Week", a:"The Beatles", r:"La semaine", d:3, g:"rock" },
     { t:"Year of the Cat", a:"Al Stewart", r:"L'année", d:2, g:"autres" },
     { t:"Instant Karma!", a:"John Lennon", r:"L'instant", d:2, g:"rock" },
-    { t:"Time After Time", a:"Cyndi Lauper", r:"Le temps", d:1, g:"pop" },
     { t:"Yesterday", a:"The Beatles", r:"Hier (le passé)", d:2, g:"rock" },
     { t:"Forever Young", a:"Alphaville", r:"L'éternité (forever)", d:1, g:"electro" },
     { t:"Le premier jour du reste de ta vie", a:"Étienne Daho", r:"Le jour", d:2, g:"variete" },
@@ -679,16 +681,18 @@ const THEMES = [
     { t:"Pompeii", a:"Bastille", r:"La Bastille", w:"artiste", d:1, g:"rock" },
     { t:"Pyramid Song", a:"Radiohead", r:"La pyramide", d:2, g:"rock" },
     { t:"Le pont Mirabeau", a:"Léo Ferré", r:"Le pont", d:3, g:"variete" },
+    { t:"The Bells of Notre Dame", a:"Alan Menken", r:"Notre-Dame (les cloches)", d:3, g:"autres" },
   ]},
-  { name:"Maison & habitations", songs:[
+  { name:"Chez soi", songs:[
     { t:"Love Shack", a:"The B-52's", r:"La cabane", d:2, g:"rock" },
     { t:"Octopus's Garden", a:"The Beatles", r:"Le jardin", d:2, g:"rock" },
     { t:"Stairway to Heaven", a:"Led Zeppelin", r:"L'escalier", d:1, g:"rock" },
     { t:"Knockin' on Heaven's Door", a:"Bob Dylan", r:"La porte", d:1, g:"rock" },
-    { t:"La maison près de la fontaine", a:"Nino Ferrer", r:"La maison (près de la fontaine)", d:3, g:"variete" },
+    { t:"La maison près de la fontaine", a:"Nino Ferrer", r:"La maison", d:3, g:"variete" },
     { t:"Ma cabane au Canada", a:"Line Renaud", r:"La cabane", d:3, g:"variete" },
     { t:"Le jardin extraordinaire", a:"Charles Trenet", r:"Le jardin", d:3, g:"variete" },
-    { t:"San Francisco", a:"Maxime Le Forestier", r:"La maison (bleue)", w:"paroles", d:3, g:"variete" },
+    { t:"San Francisco", a:"Maxime Le Forestier", r:"La maison", w:"paroles", d:3, g:"variete" },
+    { t:"Chambre avec vue", a:"Henri Salvador", r:"La chambre", d:3, g:"variete" },
   ]},
   { name:"Boissons", songs:[
     { t:"Juice", a:"Lizzo", r:"Le jus", d:2, g:"pop" },
@@ -714,7 +718,7 @@ const THEMES = [
     { t:"Demons", a:"Imagine Dragons", r:"Les démons", d:2, g:"rock" },
     { t:"Season of the Witch", a:"Donovan", r:"La sorcière", d:3, g:"autres" },
   ]},
-  { name:"Lieux de la ville", songs:[
+  { name:"Urbain", songs:[
     { t:"Streets of Philadelphia", a:"Bruce Springsteen", r:"La rue", d:1, g:"rock" },
     { t:"Boulevard of Broken Dreams", a:"Green Day", r:"Le boulevard", d:1, g:"rock" },
     { t:"Downtown", a:"Petula Clark", r:"Le centre-ville", d:2, g:"pop" },
@@ -723,6 +727,7 @@ const THEMES = [
     { t:"Funkytown", a:"Lipps Inc.", r:"La ville", d:2, g:"electro" },
     { t:"Place des Grands Hommes", a:"Patrick Bruel", r:"La place", d:2, g:"variete" },
     { t:"Le pénitencier", a:"Johnny Hallyday", r:"Le pénitencier", d:2, g:"variete" },
+    { t:"Car Wash", a:"Rose Royce", r:"La station de lavage", d:3, g:"autres" },
   ]},
   { name:"Sensations", songs:[
     { t:"Hot Stuff", a:"Donna Summer", r:"Le chaud", d:3, g:"electro" },
@@ -736,7 +741,6 @@ const THEMES = [
     { t:"Smells Like Teen Spirit", a:"Nirvana", r:"L'odeur", d:2, g:"rock" },
   ]},
   { name:"Plantes & fleurs", songs:[
-    { t:"Flowers", a:"Miley Cyrus", r:"Les fleurs", d:1, g:"pop" },
     { t:"Les feuilles mortes", a:"Yves Montand", r:"Les feuilles", d:2, g:"variete" },
     { t:"Kiss from a Rose", a:"Seal", r:"La rose", d:2, g:"pop" },
     { t:"Sunflower", a:"Post Malone", r:"Le tournesol", d:1, g:"rap" },
@@ -745,7 +749,7 @@ const THEMES = [
     { t:"Lemon Tree", a:"Fools Garden", r:"L'arbre (citronnier)", d:1, g:"pop" },
     { t:"Mon amie la rose", a:"Françoise Hardy", r:"La rose", d:2, g:"variete" },
   ]},
-  { name:"Fête & danse", songs:[
+  { name:"Sur la piste", songs:[
     { t:"La fête", a:"Michel Fugain", r:"La fête", d:3, g:"variete" },
     { t:"Je danse le Mia", a:"IAM", r:"La danse", d:1, g:"rap" },
     { t:"Danse", a:"Grégoire", r:"La danse", d:2, g:"variete" },
@@ -761,7 +765,7 @@ const THEMES = [
     { t:"Samba de Janeiro", a:"Bellini", r:"La samba", d:2, g:"electro" },
     { t:"Lambada", a:"Kaoma", r:"La lambada", d:2, g:"autres" },
   ]},
-  { name:"Route & voyage", songs:[
+  { name:"Partir", songs:[
     { t:"Voyage voyage", a:"Desireless", r:"Le voyage", d:1, g:"variete" },
     { t:"Sur la route", a:"Gérald de Palmas", r:"La route", d:2, g:"variete" },
     { t:"Les chemins de traverse", a:"Francis Cabrel", r:"Le chemin", d:2, g:"variete" },
@@ -775,8 +779,9 @@ const THEMES = [
     { t:"Leaving on a Jet Plane", a:"John Denver", r:"L'avion", d:3, g:"autres" },
     { t:"Route nationale 7", a:"Charles Trenet", r:"La route", d:3, g:"variete" },
     { t:"Road to Nowhere", a:"Talking Heads", r:"La route", d:2, g:"rock" },
+    { t:"Chariots of Fire", a:"Vangelis", r:"Le chariot", d:3, g:"autres" },
   ]},
-  { name:"Amour & séduction", songs:[
+  { name:"Cœur à prendre", songs:[
     { t:"L'amour existe encore", a:"Céline Dion", r:"L'amour", d:3, g:"variete" },
     { t:"L'amour en héritage", a:"Nana Mouskouri", r:"L'amour", d:3, g:"variete" },
     { t:"Le baiser", a:"Alain Souchon", r:"Le baiser", d:2, g:"variete" },
@@ -792,7 +797,7 @@ const THEMES = [
     { t:"Oh ! Chéri chéri", a:"Karen Cheryl", r:"Chéri", d:3, g:"variete" },
     { t:"Mariage à l'essai", a:"Alain Chamfort", r:"Le mariage", d:3, g:"variete" },
   ]},
-  { name:"Paradis & enfer", songs:[
+  { name:"L'au-delà", songs:[
     { t:"Le diable (ça va)", a:"Jacques Brel", r:"Le diable", d:3, g:"variete" },
     { t:"Le ciel, le soleil et la mer", a:"François Deguelt", r:"Le ciel", d:3, g:"variete" },
     { t:"L'enfer", a:"Stromae", r:"L'enfer", d:1, g:"variete" },
@@ -808,7 +813,7 @@ const THEMES = [
     { t:"Dieu fumeur de havanes", a:"Catherine Deneuve", r:"Dieu", d:2, g:"variete" },
     { t:"Devil Inside", a:"INXS", r:"Le diable", d:2, g:"rock" },
   ]},
-  { name:"Guerre & paix", songs:[
+  { name:"Conflits", songs:[
     { t:"La guerre de 14-18", a:"Georges Brassens", r:"La guerre", d:3, g:"variete" },
     { t:"La guerre est finie", a:"Indochine", r:"La guerre", d:3, g:"variete" },
     { t:"Guerre", a:"Johnny Hallyday", r:"La guerre", d:3, g:"variete" },
@@ -822,7 +827,7 @@ const THEMES = [
     { t:"Heroes", a:"David Bowie", r:"Les héros", d:1, g:"rock" },
     { t:"Je chante avec toi liberté", a:"Nana Mouskouri", r:"La liberté", d:3, g:"variete" },
   ]},
-  { name:"Cinéma & spectacle", songs:[
+  { name:"En scène", songs:[
     { t:"Le cinéma", a:"Claude Nougaro", r:"Le cinéma", d:3, g:"variete" },
     { t:"L'acteur", a:"Michel Sardou", r:"L'acteur", d:3, g:"variete" },
     { t:"Les comédiens", a:"Charles Aznavour", r:"Les comédiens", d:2, g:"variete" },
@@ -834,7 +839,7 @@ const THEMES = [
     { t:"Applause", a:"Lady Gaga", r:"Les applaudissements", d:2, g:"pop" },
     { t:"Rockstar", a:"Post Malone", r:"La star", d:1, g:"rap" },
   ]},
-  { name:"Nuit & rêve", songs:[
+  { name:"Dodo", songs:[
     { t:"La nuit je mens", a:"Alain Bashung", r:"La nuit", d:2, g:"variete" },
     { t:"Une nuit sur son épaule", a:"Véronique Sanson", r:"La nuit", d:2, g:"variete" },
     { t:"Les nuits parisiennes", a:"Louise Attaque", r:"La nuit", d:2, g:"variete" },
@@ -852,7 +857,7 @@ const THEMES = [
     { t:"The Sound of Silence", a:"Simon & Garfunkel", r:"Le silence", d:2, g:"autres" },
     { t:"Nightmare", a:"Avenged Sevenfold", r:"Le cauchemar", d:2, g:"rock" },
   ]},
-  { name:"Mer & plage", songs:[
+  { name:"Au bord de l'eau", songs:[
     { t:"Sea, Sex and Sun", a:"Serge Gainsbourg", r:"La mer", d:2, g:"variete" },
     { t:"Beyond the Sea", a:"Bobby Darin", r:"La mer", d:3, g:"jazz" },
     { t:"La vague", a:"Izïa", r:"La vague", d:2, g:"variete" },
@@ -933,15 +938,53 @@ const THEMES = [
     { t:"Surfin' U.S.A.", a:"The Beach Boys", r:"Le surf", d:2, g:"rock" },
     { t:"Bravo tu as gagné", a:"Mireille Mathieu", r:"Gagner", d:2, g:"variete" },
   ]},
-  { name:"Oiseaux", songs:[
+  { name:"Plumes", songs:[
     { t:"Free Bird", a:"Lynyrd Skynyrd", r:"L'oiseau", d:1, g:"rock" },
-    { t:"Birds of a Feather", a:"Billie Eilish", r:"Les oiseaux", d:1, g:"pop" },
-    { t:"Three Little Birds", a:"Bob Marley", r:"Les oiseaux", d:1, g:"autres" },
-    { t:"Songbird", a:"Fleetwood Mac", r:"L'oiseau chanteur", d:2, g:"rock" },
+    { t:"Birds of a Feather", a:"Billie Eilish", r:"L'oiseau", d:1, g:"pop" },
+    { t:"Three Little Birds", a:"Bob Marley", r:"L'oiseau", d:1, g:"autres" },
+    { t:"Songbird", a:"Fleetwood Mac", r:"L'oiseau", d:2, g:"rock" },
     { t:"Rockin' Robin", a:"Michael Jackson", r:"Le rouge-gorge", d:2, g:"pop" },
     { t:"Fly Like an Eagle", a:"Steve Miller Band", r:"L'aigle", d:3, g:"rock" },
     { t:"La colombe", a:"Jacques Brel", r:"La colombe", d:3, g:"variete" },
     { t:"Rossignol", a:"Luis Mariano", r:"Le rossignol", d:3, g:"variete" },
+    { t:"Hedwig's Theme", a:"John Williams", r:"La chouette (Hedwige)", d:2, g:"autres" },
+    { t:"Mockingbird", a:"Eminem", r:"L'oiseau moqueur", d:1, g:"rap" },
+  ]},
+  { name:"Sang bleu", songs:[
+    { t:"Dancing Queen", a:"ABBA", r:"La reine", d:1, g:"pop" },
+    { t:"Royals", a:"Lorde", r:"La royauté", d:1, g:"pop" },
+    { t:"Killer Queen", a:"Queen", r:"La reine", d:1, g:"rock" },
+    { t:"Princess of China", a:"Coldplay", r:"La princesse", d:2, g:"rock" },
+    { t:"Emperor's New Clothes", a:"Panic! At The Disco", r:"L'empereur", d:3, g:"rock" },
+    { t:"Her Majesty", a:"The Beatles", r:"Sa Majesté", d:3, g:"rock" },
+    { t:"Prince Ali", a:"Robin Williams", r:"Le prince", d:3, g:"autres" },
+    { t:"I Just Can't Wait to Be King", a:"Jason Weaver", r:"Le roi", d:3, g:"autres" },
+  ]},
+  { name:"Armes", songs:[
+    { t:"Shotgun", a:"George Ezra", r:"Le fusil", d:1, g:"pop" },
+    { t:"21 Guns", a:"Green Day", r:"Le fusil", d:2, g:"rock" },
+    { t:"Grenade", a:"Bruno Mars", r:"La grenade", d:2, g:"pop" },
+    { t:"Cherry Bomb", a:"The Runaways", r:"La bombe", d:2, g:"rock" },
+    { t:"Bulletproof", a:"La Roux", r:"Les balles", d:2, g:"electro" },
+    { t:"Happiness Is a Warm Gun", a:"The Beatles", r:"Le pistolet", d:3, g:"rock" },
+    { t:"Bang Bang (My Baby Shot Me Down)", a:"Nancy Sinatra", r:"Le coup de feu (bang bang)", d:3, g:"autres" },
+  ]},
+  { name:"Ça brille", songs:[
+    { t:"Sparks", a:"Coldplay", r:"Les étincelles", d:1, g:"rock" },
+    { t:"Man in the Mirror", a:"Michael Jackson", r:"Le miroir", d:1, g:"pop" },
+    { t:"Lights", a:"Ellie Goulding", r:"La lumière", d:2, g:"pop" },
+    { t:"Ray of Light", a:"Madonna", r:"Le rayon", d:3, g:"pop" },
+    { t:"I See the Light", a:"Mandy Moore", r:"La lumière", d:3, g:"autres" },
+    { t:"Reflection", a:"Christina Aguilera", r:"Le reflet", d:3, g:"autres" },
+    { t:"Flash", a:"Queen", r:"Le flash", d:3, g:"autres" },
+  ]},
+  { name:"Primeur", songs:[
+    { t:"Passionfruit", a:"Drake", r:"Le fruit de la passion", d:1, g:"rap" },
+    { t:"Pomme C", a:"Calogero", r:"La pomme", d:2, g:"variete" },
+    { t:"Kiwi", a:"Harry Styles", r:"Le kiwi", d:2, g:"pop" },
+    { t:"Cherry", a:"Harry Styles", r:"La cerise", d:2, g:"pop" },
+    { t:"La banane", a:"Philippe Katerine", r:"La banane", d:2, g:"variete" },
+    { t:"Orange Crush", a:"R.E.M.", r:"L'orange", d:3, g:"rock" },
   ]},
 ];
 
@@ -997,7 +1040,9 @@ function loadSettings(){ try{ const x=JSON.parse(localStorage.getItem(SET_KEY));
 function saveSettings(){ try{ localStorage.setItem(SET_KEY, JSON.stringify(settings)); }catch(e){} }
 function songOk(s){ return !settings.genres.length || settings.genres.includes(s.g||"pop"); }
 function themeSongs(th){ return th.songs; }          // pas de filtre strict (voir ci-dessus)
-function distinctAnswers(list){ return new Set(list.map(s=>norm(s.r))).size; }
+/* Clé de réponse : ignore parenthèses, articles et pluriels (« Les oiseaux » = « L'oiseau »). */
+function answerKey(r){ return norm(String(r).replace(/\(.*?\)/g," ")).split(" ").filter(w=>w&&!["l","la","le","les","un","une","des","d"].includes(w)).map(w=>w.replace(/[sx]$/,"")).join(" "); }
+function distinctAnswers(list){ return new Set(list.map(s=>answerKey(s.r))).size; }
 function themeEligible(th){ return distinctAnswers(themeSongs(th))>=ROUND; }
 function eligibleIdx(){ return THEMES.map((t,i)=>i).filter(i=>themeEligible(THEMES[i])); }
 function prefScore(s){ // 0 = idéal ; genre hors sélection = gros malus, puis écart de niveau
@@ -1026,7 +1071,7 @@ function pickDistinct(pool, all, n){
   const take=(list, allowDup)=>{ for(const s of list){
     if(chosen.length>=n) return;
     if(chosen.includes(s)) continue;
-    const k=norm(s.r);
+    const k=answerKey(s.r);
     if(!allowDup && answers.has(k)) continue;
     chosen.push(s); answers.add(k); } };
   take(byLevel(pool), false);

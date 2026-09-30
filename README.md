@@ -63,8 +63,8 @@ Tout est dans la constante `THEMES` en haut du `<script>` de `index.html` :
 | `d` | niveau : 1 facile · 2 moyen · 3 difficile (rang Deezer : ≥ 800 000 / 600 000–800 000 / en dessous) | non (défaut 2) |
 | `g` | genre : `pop` `rock` `variete` `rap` `soul` `electro` `jazz` `autres` (attribué par artiste) | non (défaut `pop`) |
 
-Règles de contenu : **au moins 6 réponses différentes** par fil rouge et **chaque chanson vérifiée**
-(existence + bon artiste) avant ajout, et **rang Deezer ≥ 500 000** (sauf variété française). Une même réponse peut apparaître plusieurs fois dans le pool :
+Règles de contenu : **aucune réponse ne reprend un mot du nom du fil rouge** (ex. pas « guerre » dans « Guerre & paix »), **au moins 6 réponses différentes** par fil rouge et **chaque chanson vérifiée**
+(existence + bon artiste) avant ajout, et **rang Deezer ≥ 500 000** (sauf variété française et musiques de films très connues, genre `autres`). Deux réponses sont considérées identiques si elles ne diffèrent que par l'article, le pluriel ou une précision entre parenthèses. Une même réponse peut apparaître plusieurs fois dans le pool :
 le tirage (`pickDistinct`) garantit qu'elle ne sort **qu'une fois par fil rouge joué**.
 
 ## Limites connues
