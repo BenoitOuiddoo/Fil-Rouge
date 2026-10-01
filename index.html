@@ -74,6 +74,23 @@
   .primary:hover{filter:brightness(1.07)}
   .primary:disabled{opacity:.4;cursor:not-allowed;filter:none}
   .rand-btn:disabled{opacity:.4;cursor:not-allowed}
+  .modes{display:grid;gap:10px;margin-bottom:16px}
+  .mode-btn{text-align:left;background:var(--surface2);border:1px solid var(--line);border-radius:13px;padding:12px 14px;color:var(--ink);cursor:pointer;font:inherit}
+  .mode-btn b{display:block;font-size:15px;margin-bottom:2px}
+  .mode-btn span{color:var(--muted);font-size:13px}
+  .mode-btn.on{border-color:var(--gold);background:var(--gold-soft)}
+  .mode-btn.on b{color:var(--gold)}
+  .sub-h{font-size:14px;margin:14px 0 8px;color:var(--muted);font-weight:600}
+  #teamsBlock{margin-bottom:16px}
+  details#allThemes summary, details#filters summary{cursor:pointer;font-weight:700;font-size:16px;list-style:none}
+  details#allThemes summary::-webkit-details-marker, details#filters summary::-webkit-details-marker{display:none}
+  details#allThemes summary::before, details#filters summary::before{content:"▸ ";color:var(--gold)}
+  details#allThemes[open] summary::before, details#filters[open] summary::before{content:"▾ "}
+  .f-sum{display:block;font-weight:500;font-size:13px;color:var(--muted);margin:4px 0 0 18px}
+  .clm{display:flex;justify-content:center;gap:18px;margin:6px 0 12px;font-weight:700}
+  .clm .pts{color:var(--gold);font-size:22px}
+  .clm .t{color:var(--muted);font-size:22px}
+  .clm-result{margin-top:10px;font-weight:700;color:var(--gold)}
   .sp-btn{background:var(--green);color:#04200f;font-weight:700;font-size:16px;
     width:100%;padding:14px;border-radius:13px}
   .sp-btn:hover{filter:brightness(1.05)}
@@ -198,27 +215,35 @@
   <!-- ===== SETUP ===== -->
   <section id="setup" class="hidden">
     <div class="card">
-      <h2>Les équipes</h2>
-      <div class="teams-list" id="teamsList"></div>
-      <button class="link-btn" id="addTeam">+ Ajouter une équipe</button>
-    </div>
-    <div class="card">
-      <h2>Réglages</h2>
-      <p class="sub" style="margin-bottom:8px">Niveau</p>
+      <details id="filters">
+      <summary><span class="f-title">Filtres</span><span class="f-sum" id="filterSum"></span></summary>
+      <p class="sub" style="margin:12px 0 8px">Niveau</p>
       <div class="listen-len" id="levelSel"></div>
       <p class="sub" style="margin-bottom:8px">Genres <span style="opacity:.7">(aucun sélectionné = tous)</span></p>
       <div class="listen-len" id="genreSel"></div>
       <p class="sub" id="filterInfo" style="margin:4px 0 0"></p>
+      </details>
     </div>
     <div class="card">
-      <h2>La partie</h2>
-      <p class="sub">En équipes, avec des points. 3 fils rouges tirés au hasard, score cumulé.</p>
-      <button class="rand-btn" id="startBtn">🎲 Lancer une partie<span class="btn-sub">3 fils rouges de 6 musiques</span></button>
+      <h2>On joue comment ?</h2>
+      <div class="modes" id="typeSel"></div>
+      <div id="teamsBlock" class="hidden">
+        <h3 class="sub-h">Les équipes</h3>
+        <div class="teams-list" id="teamsList"></div>
+        <button class="link-btn" id="addTeam">+ Ajouter une équipe</button>
+      </div>
+      <div id="nBlock" class="hidden" style="margin-bottom:16px">
+        <h3 class="sub-h">Nombre de fils rouges</h3>
+        <div class="listen-len" id="nSel"></div>
+      </div>
+      <button class="rand-btn" id="startBtn">🎲 Lancer</button>
     </div>
     <div class="card">
-      <h2>Jouer un seul fil rouge</h2>
-      <p class="sub">Sans équipe ni points — juste écouter et deviner (6 musiques).</p>
-      <div class="themes" id="soloGrid"></div>
+      <details id="allThemes">
+        <summary>Voir tous les fils rouges</summary>
+        <p class="sub" id="allSub" style="margin:10px 0">Choisis un fil rouge précis (6 musiques), dans le mode sélectionné.</p>
+        <div class="themes" id="soloGrid"></div>
+      </details>
     </div>
     <div class="footlinks">
       <button id="resetHist">Réinitialiser l'historique (fils rouges / musiques déjà passés)</button>
@@ -242,6 +267,7 @@
       <div class="status" id="status">Prêt à jouer</div>
 
       <div class="listen-len" id="listenLen"></div>
+      <div class="clm hidden" id="clmBox"><span class="t" id="clmTime">0 s</span><span class="pts" id="clmPts">10 pts en jeu</span></div>
       <div class="player-controls" id="controls"></div>
       <div class="hints" id="hintBox"></div>
 
@@ -250,6 +276,7 @@
         <div class="artist" id="rArtist"></div>
         <div class="answer-label">La réponse</div>
         <div class="answer" id="rAnswer"></div>
+        <div class="clm-result hidden" id="clmResult"></div>
       </div>
     </div>
 
@@ -1001,6 +1028,16 @@ const GAME_THEMES = 3;  // thèmes par partie
 
 let teams = [ {name:"Équipe 1", pts:0}, {name:"Équipe 2", pts:0} ];
 let rounds = [], roundIdx = 0, songIdx = 0, phase = "setup", mode = "game";
+/* mode    : "game" = 3 fils rouges, "solo" = un seul fil rouge (choisi dans la grille)
+   scoring : true = équipes + points, false = sans équipe ni points (choix « Mode de jeu » à l'accueil,
+             figé au lancement et sauvegardé avec la partie en cours) */
+let scoring = true;
+/* gameType : "quick" = partie rapide (1 fil rouge aléatoire, sans points)
+              "teams" = équipes + points, 1 / 3 / 5 fils rouges
+              "clm"   = contre la montre : morceau entier depuis 5 s, points dégressifs selon la rapidité */
+let gameType = "quick", clmStart = null, clmTimer = null, clmTotal = 0;
+const CLM_START_MS = 5000, CLM_MAX = 10, CLM_STEP_S = 3;   // 10 pts, -1 pt toutes les 3 s, minimum 1
+function clmPoints(){ if(clmStart==null) return CLM_MAX; return Math.max(1, CLM_MAX - Math.floor((Date.now()-clmStart)/1000/CLM_STEP_S)); }
 let listenSec = 15;
 let clientId = "";
 let token = null, tokenExp = 0;
@@ -1035,8 +1072,8 @@ const SET_KEY = "filrouge_settings_v1";
 const LEVELS = [[0,"Tous niveaux"],[1,"Facile"],[2,"Moyen"],[3,"Difficile"]];
 const GENRES = [["pop","Pop"],["rock","Rock"],["variete","Variété française"],["rap","Rap / Hip-hop"],
   ["soul","Soul / Funk / R&B"],["electro","Disco / Dance / Électro"],["jazz","Jazz & crooners"],["autres","Folk, country, reggae & BO"]];
-let settings = { level:0, genres:[] };
-function loadSettings(){ try{ const x=JSON.parse(localStorage.getItem(SET_KEY)); if(x){ settings.level=+x.level||0; settings.genres=Array.isArray(x.genres)?x.genres:[]; } }catch(e){} }
+let settings = { level:0, genres:[], gameType:"quick", nThemes:3 };
+function loadSettings(){ try{ const x=JSON.parse(localStorage.getItem(SET_KEY)); if(x){ settings.level=+x.level||0; settings.genres=Array.isArray(x.genres)?x.genres:[]; settings.gameType = ["quick","teams","clm"].includes(x.gameType) ? x.gameType : (x.scoring===true?"teams":"quick"); settings.nThemes = [1,3,5].includes(x.nThemes)?x.nThemes:3; } }catch(e){} }
 function saveSettings(){ try{ localStorage.setItem(SET_KEY, JSON.stringify(settings)); }catch(e){} }
 function songOk(s){ return !settings.genres.length || settings.genres.includes(s.g||"pop"); }
 function themeSongs(th){ return th.songs; }          // pas de filtre strict (voir ci-dessus)
@@ -1049,7 +1086,29 @@ function prefScore(s){ // 0 = idéal ; genre hors sélection = gros malus, puis 
   return (songOk(s)?0:10) + (settings.level ? Math.abs((s.d||2)-settings.level) : 0);
 }
 function byLevel(list){ return shuffle(list).sort((a,b)=>prefScore(a)-prefScore(b)); } // tri stable
+const GAME_TYPES = [
+  ["quick","⚡ Partie rapide","Un fil rouge au hasard, 6 musiques, sans équipe ni points."],
+  ["teams","👥 Faites des équipes","Des équipes, des points, 1, 3 ou 5 fils rouges."],
+  ["clm","⏱️ Contre la montre","Tous ensemble : plus on trouve vite, plus on marque (10 pts → 1 pt). 1, 3 ou 5 fils rouges."]];
+function multiThemes(){ return settings.gameType==="teams" || settings.gameType==="clm"; }   // choix 1 / 3 / 5
+function neededThemes(){ return multiThemes() ? settings.nThemes : 1; }
+function renderScoreMode(){
+  const box=$("typeSel"); box.innerHTML="";
+  GAME_TYPES.forEach(([k,l,d])=>{ const b=document.createElement("button"); b.className="mode-btn"+(settings.gameType===k?" on":"");
+    b.innerHTML=`<b>${l}</b><span>${d}</span>`; b.onclick=()=>{ settings.gameType=k; saveSettings(); renderSettings(); }; box.appendChild(b); });
+  $("teamsBlock").classList.toggle("hidden", settings.gameType!=="teams");
+  $("nBlock").classList.toggle("hidden", !multiThemes());
+  const nb=$("nSel"); nb.innerHTML="";
+  [1,3,5].forEach(n=>{ const b=document.createElement("button"); b.textContent=n+" fil"+(n>1?"s":"")+" rouge"+(n>1?"s":"");
+    if(settings.nThemes===n) b.className="on"; b.onclick=()=>{ settings.nThemes=n; saveSettings(); renderSettings(); }; nb.appendChild(b); });
+  const n=neededThemes();
+  $("startBtn").innerHTML = settings.gameType==="teams"
+    ? `🎲 Lancer la partie<span class="btn-sub">${n} fil${n>1?"s":""} rouge${n>1?"s":""} de 6 musiques</span>`
+    : settings.gameType==="clm" ? `⏱️ Lancer le contre-la-montre<span class="btn-sub">${n} fil${n>1?"s":""} rouge${n>1?"s":""} de 6 musiques</span>`
+    : `⚡ Lancer une partie rapide<span class="btn-sub">1 fil rouge au hasard, 6 musiques</span>`;
+}
 function renderSettings(){
+  renderScoreMode();
   const lv=$("levelSel"); lv.innerHTML="";
   LEVELS.forEach(([k,l])=>{ const b=document.createElement("button"); b.textContent=l; if(settings.level===k) b.className="on";
     b.onclick=()=>{ settings.level=k; saveSettings(); renderSettings(); }; lv.appendChild(b); });
@@ -1058,12 +1117,15 @@ function renderSettings(){
     const b=document.createElement("button"); b.textContent=`${l} · ${n}`; if(settings.genres.includes(k)) b.className="on";
     b.onclick=()=>{ const i=settings.genres.indexOf(k); if(i<0) settings.genres.push(k); else settings.genres.splice(i,1);
       saveSettings(); renderSettings(); }; gs.appendChild(b); });
+  const lvName = (LEVELS.find(l=>l[0]===settings.level)||LEVELS[0])[1];
+  const gNames = GENRES.filter(g=>settings.genres.includes(g[0])).map(g=>g[1]);
+  $("filterSum").textContent = (settings.level ? lvName : "Tous niveaux") + " · " + (gNames.length ? gNames.join(", ") : "Tous genres");
   const total=THEMES.reduce((c,th)=>c+th.songs.length,0);
   const match=THEMES.reduce((c,th)=>c+th.songs.filter(s=>songOk(s)&&(!settings.level||(s.d||2)===settings.level)).length,0);
   $("filterInfo").textContent = (settings.level||settings.genres.length)
     ? `${match} titres sur ${total} correspondent à tes réglages : ils passent en priorité, le reste complète.`
     : `${total} titres, tous niveaux et genres confondus.`;
-  $("startBtn").disabled = eligibleIdx().length<GAME_THEMES;
+  $("startBtn").disabled = eligibleIdx().length<neededThemes();
   renderSoloGrid();
 }
 function pickDistinct(pool, all, n){
@@ -1091,28 +1153,29 @@ function drawRound(themeIdx){
   saveHistory();
   return chosen;
 }
-function drawGame(){
-  // 3 thèmes distincts, priorité à ceux pas encore joués
+function drawGame(n){
+  n = n || GAME_THEMES;
+  // n fils rouges distincts, priorité à ceux pas encore joués
   const ok=eligibleIdx();
   const notDone=ok.filter(i=>!history.themesDone.includes(THEMES[i].name));
   let pool=notDone.slice();
-  if(pool.length<GAME_THEMES){
+  if(pool.length<n){
     const done=ok.filter(i=>history.themesDone.includes(THEMES[i].name));
     pool=pool.concat(shuffle(done));
   }
-  pool=shuffle(pool).slice(0,GAME_THEMES);
+  pool=shuffle(pool).slice(0,n);
   rounds=pool.map(idx=>({ themeIdx:idx, themeName:THEMES[idx].name, songs:drawRound(idx) }));
   roundIdx=0; songIdx=0;
 }
 
 /* ---------- persistance de la partie ---------- */
-function save(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify({teams,rounds,roundIdx,songIdx,phase,listenSec,mode})); }catch(e){} }
+function save(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify({teams,rounds,roundIdx,songIdx,phase,listenSec,mode,scoring,gameType,clmTotal})); }catch(e){} }
 function loadGame(){
   try{
     const s=JSON.parse(localStorage.getItem(SAVE_KEY));
     if(s){ if(typeof s.listenSec==="number") listenSec=s.listenSec;
       if(s.phase==="playing" && s.rounds && s.rounds.length){
-        teams=s.teams; rounds=s.rounds; roundIdx=s.roundIdx||0; songIdx=s.songIdx||0; mode=s.mode||"game"; phase="playing"; return true; } }
+        teams=s.teams; rounds=s.rounds; roundIdx=s.roundIdx||0; songIdx=s.songIdx||0; mode=s.mode||"game"; scoring = (typeof s.scoring==="boolean") ? s.scoring : mode!=="solo"; gameType = s.gameType || (scoring?"teams":"quick"); clmTotal = s.clmTotal||0; phase="playing"; return true; } }
   }catch(e){}
   return false;
 }
@@ -1244,24 +1307,34 @@ async function playSong(){
   const track=await findTrack(s);
   if(!track){ setStatus("Morceau introuvable sur Spotify."); setPlayBusy(false); return; }
   const dur=track.duration_ms||0;
-  const pct=(START_PCT[listenSec]!=null)?START_PCT[listenSec]:0;
-  const spanMs=listenSec>0?listenSec*1000:Math.max(1000,dur);
-  let startMs=pct*dur;
-  if(dur) startMs=Math.max(0, Math.min(startMs, dur-spanMs-500));
-  const total=listenSec>0?listenSec*1000:Math.max(1000, dur-startMs);
+  const clm = gameType==="clm";
+  const len = clm ? 0 : listenSec;                       // contre la montre : morceau entier
+  const pct=(START_PCT[len]!=null)?START_PCT[len]:0;
+  const spanMs=len>0?len*1000:Math.max(1000,dur);
+  let startMs = clm ? Math.min(CLM_START_MS, Math.max(0,dur-1000)) : pct*dur;
+  if(dur && !clm) startMs=Math.max(0, Math.min(startMs, dur-spanMs-500));
+  const total=len>0?len*1000:Math.max(1000, dur-startMs);
   await apiPlay(track.uri, startMs);
   playing=true; $("disc").classList.add("spin"); setStatus("Lecture en cours…"); renderControls();
+  if(clm && clmStart==null && !revealed){ clmStart=Date.now(); clmTimer=setInterval(clmRender,250); }
   const start=Date.now();
   barTimer=setInterval(()=>{ const p=Math.min(1,(Date.now()-start)/total);
     $("barFill").style.width=(p*100)+"%"; if(p>=1) clearInterval(barTimer); },200);
   listenTimer=setTimeout(async()=>{
     await stopPlay();
-    if(listenSec===0){ setStatus("Morceau terminé."); if(!revealed) revealAnswer(); }
+    if(listenSec===0 || gameType==="clm"){ setStatus("Morceau terminé."); if(!revealed) revealAnswer(true); }
     else setStatus("Extrait terminé.");
     renderControls();
   }, total);
 }
 function setStatus(t){ $("status").textContent=t; }
+function clmStop(){ if(clmTimer){ clearInterval(clmTimer); clmTimer=null; } }
+function clmRender(){
+  if(gameType!=="clm") return;
+  const sec = clmStart==null ? 0 : Math.floor((Date.now()-clmStart)/1000);
+  $("clmTime").textContent = sec+" s"; $("clmPts").textContent = clmPoints()+" pts en jeu";
+  if(!revealed) $("revealBtn").textContent = clmStart==null ? "Révéler la réponse" : `🙋 Trouvé ! (${clmPoints()} pts)`;
+}
 function setPlayBusy(b){ renderControls(); const btn=$("controls").querySelector(".play-btn"); if(btn) btn.disabled=b; }
 function renderListenLen(){
   const box=$("listenLen"); box.innerHTML="";
@@ -1302,9 +1375,12 @@ function renderTeams(){
   list.querySelectorAll("input").forEach(inp=>{ inp.oninput=e=>{ teams[+e.target.dataset.i].name=e.target.value||"Équipe"; saveTeams(); }; });
   list.querySelectorAll("[data-del]").forEach(b=>{ b.onclick=e=>{ teams.splice(+e.target.dataset.del,1); saveTeams(); renderTeams(); }; });
 }
-function beginGame(){
-  mode="game"; teams.forEach(t=>t.pts=0);
-  drawGame(); phase="playing"; save();
+function applyType(){ gameType=settings.gameType; scoring = gameType==="teams"; clmTotal=0; teams.forEach(t=>t.pts=0); }
+function beginGame(){                 // bouton principal
+  applyType();
+  if(multiThemes() && settings.nThemes>1){ mode="game"; drawGame(settings.nThemes); }
+  else { const i=randThemeIdx(); if(i==null) return; mode="solo"; rounds=[{themeIdx:i, themeName:THEMES[i].name, songs:drawRound(i)}]; roundIdx=0; songIdx=0; }
+  phase="playing"; save();
   initPlayer(); showPlay();
 }
 function randThemeIdx(){
@@ -1313,8 +1389,8 @@ function randThemeIdx(){
   const pool=notDone.length?notDone:ok;
   return pool[Math.floor(Math.random()*pool.length)];
 }
-function beginSolo(idx){
-  mode="solo";
+function beginSolo(idx){             // un fil rouge précis, dans le mode choisi
+  applyType(); mode="solo";
   rounds=[{themeIdx:idx, themeName:THEMES[idx].name, songs:drawRound(idx)}];
   roundIdx=0; songIdx=0; phase="playing"; save();
   initPlayer(); showPlay();
@@ -1340,13 +1416,16 @@ $("resetHist").onclick=()=>{ resetHistory(); $("resetHist").textContent="Histori
 
 function showPlay(){
   showScreen("play");
-  const solo = mode==="solo";
+  const solo = rounds.length<=1;          // un seul fil rouge
   $("liveTheme").textContent=rounds[roundIdx].themeName;
   $("progress").textContent = solo
     ? `Titre ${songIdx+1}/${curSongs().length}`
     : `Fil rouge ${roundIdx+1}/${rounds.length} · Titre ${songIdx+1}/${curSongs().length}`;
   $("songNum").textContent=`Titre n°${songIdx+1}`;
-  $("scores").classList.toggle("hidden", solo);
+  $("scores").classList.toggle("hidden", !scoring && gameType!=="clm");
+  $("listenLen").classList.toggle("hidden", gameType==="clm");
+  clmStop(); clmStart=null; $("clmBox").classList.toggle("hidden", gameType!=="clm"); clmRender();
+  $("clmResult").classList.add("hidden");
   renderScores(); stopPlay();
   setStatus(songIdx===0
     ? (solo ? "Fil rouge : "+rounds[roundIdx].themeName : "Nouveau fil rouge : "+rounds[roundIdx].themeName)
@@ -1370,21 +1449,30 @@ function renderHints(){
   $("hintBtn").disabled = hintLevel>=arr.length;
 }
 $("hintBtn").onclick=()=>{ const arr=hintsFor(curSong()); if(hintLevel<arr.length){ hintLevel++; renderHints(); } };
-function revealAnswer(){
+function revealAnswer(timeout){
   if(revealed) return; revealed=true;
+  if(gameType==="clm"){
+    clmStop(); const got = (!timeout && clmStart!=null) ? clmPoints() : 0;
+    const sec = clmStart==null ? 0 : Math.floor((Date.now()-clmStart)/1000);
+    clmTotal += got; renderScores();
+    const r=$("clmResult"); r.classList.remove("hidden");
+    r.textContent = got ? `Trouvé en ${sec} s → +${got} points` : (clmStart==null ? "Réponse révélée sans écoute : 0 point" : "Personne n'a trouvé : 0 point");
+    $("revealBtn").textContent="Révéler la réponse";
+  }
   const s=curSong();
   $("rTitle").textContent=s.t; $("rArtist").textContent=s.a; $("rAnswer").textContent=s.r;
   $("reveal").classList.remove("hidden"); $("revealBtn").classList.add("hidden"); $("hintBtn").disabled=true;
-  if(mode==="solo"){ showNext(); }
+  if(!scoring){ showNext(); }
   else { renderAward(); $("ask").classList.remove("hidden"); }
 }
-$("revealBtn").onclick=revealAnswer;
+$("revealBtn").onclick=()=>revealAnswer(false);
 function showNext(){
   $("nextRow").classList.remove("hidden");
   const lastSong=songIdx>=curSongs().length-1;
   const lastTheme=roundIdx>=rounds.length-1;
-  if(mode==="solo") $("nextBtn").textContent = lastSong ? "Terminé" : "Titre suivant";
-  else $("nextBtn").textContent = lastSong ? (lastTheme ? "Voir le classement" : "Fil rouge suivant") : "Titre suivant";
+  $("nextBtn").textContent = !lastSong ? "Titre suivant"
+    : !lastTheme ? "Fil rouge suivant"
+    : scoring ? "Voir le classement" : "Terminé";
 }
 function renderAward(){
   const box=$("award"); box.innerHTML="";
@@ -1421,28 +1509,33 @@ window.addEventListener("popstate", ()=>{
   const cur=currentScreen();
   if(cur==="play"){
     try{ window.history.pushState({fr:"play"}, "", location.pathname); pushed++; }catch(e){} // on reste tant que pas confirmé
-    if(confirm(mode==="solo" ? "Quitter le fil rouge en cours ?" : "Quitter la partie en cours ? Les scores seront perdus.")) goHome();
+    if(confirm(quitMsg())) goHome();
   } else if(cur==="end"){ goHome(); }
 });
 function renderScores(){
   const box=$("scores"); box.innerHTML="";
+  if(gameType==="clm"){ const c=document.createElement("div"); c.className="score-chip"; c.innerHTML=`Total <b>${clmTotal}</b> pts`; box.appendChild(c); return; }
   teams.forEach((tm,i)=>{ const c=document.createElement("div"); c.className="score-chip";
     c.innerHTML=`<span class="swatch" style="background:${COLORS[i%COLORS.length]}"></span>${tm.name} <b>${tm.pts}</b>`;
     box.appendChild(c); });
 }
 function showEnd(){
   showScreen("end");
-  if(mode==="solo"){
-    $("end").querySelector("h2").textContent="Fil rouge terminé";
-    $("winner").textContent=rounds[0].themeName;
-    $("playedThemes").textContent="";
+  const single = rounds.length<=1;
+  $("end").querySelector("h2").textContent = single ? "Fil rouge terminé" : "Partie terminée";
+  $("replaySame").textContent = single ? "Rejouer ce fil rouge" : "Rejouer";
+  if(gameType==="clm"){
+    $("winner").textContent = clmTotal+" points";
+    $("playedThemes").textContent = "Contre la montre · "+rounds.map(r=>r.themeName).join(", ");
+    $("rank").innerHTML=""; return;
+  }
+  if(!scoring){                                   // sans équipe : pas de classement
+    $("winner").textContent = single ? rounds[0].themeName : "Bravo !";
+    $("playedThemes").textContent = single ? "" : "Fils rouges : "+rounds.map(r=>r.themeName).join(", ");
     $("rank").innerHTML="";
-    $("replaySame").textContent="Rejouer ce fil rouge";
     return;
   }
-  $("end").querySelector("h2").textContent="Partie terminée";
-  $("replaySame").textContent="Rejouer";
-  $("playedThemes").textContent="Fils rouges : "+rounds.map(r=>r.themeName).join(", ");
+  $("playedThemes").textContent=(single?"Fil rouge : ":"Fils rouges : ")+rounds.map(r=>r.themeName).join(", ");
   const ordered=teams.map((t,i)=>({...t,ci:i})).sort((a,b)=>b.pts-a.pts);
   const top=ordered[0].pts, winners=ordered.filter(t=>t.pts===top);
   $("winner").textContent=winners.length>1?"Égalité !":ordered[0].name+" gagne";
@@ -1452,13 +1545,14 @@ function showEnd(){
       <span class="swatch" style="background:${COLORS[t.ci%COLORS.length]}"></span>
       <span class="nm">${t.name}</span><span class="pts">${t.pts}</span>`; rank.appendChild(row); });
 }
-$("replaySame").onclick=()=>{ if(mode==="solo") beginSolo(rounds[0].themeIdx); else beginGame(); };
-async function goHome(){ clearSave(); await stopPlay(); phase="setup"; rounds=[]; roundIdx=0; songIdx=0;
+$("replaySame").onclick=()=>{ settings.gameType=gameType; if(mode==="solo") beginSolo(rounds[0].themeIdx); else beginGame(); };
+async function goHome(){ clearSave(); clmStop(); await stopPlay(); phase="setup"; rounds=[]; roundIdx=0; songIdx=0;
   teams.forEach(t=>t.pts=0); renderTeams(); showScreen("setup");
   // retire les entrées « jeu / fin » restées dans l'historique pour qu'un retour depuis l'accueil sorte normalement
   if(pushed>0){ const n=pushed; pushed=0; ignorePop=true; window.history.go(-n); } }
 $("newGame").onclick=goHome;
-$("quitGame").onclick=()=>{ if(confirm("Quitter la partie en cours ? Les scores seront perdus.")) goHome(); };
+function quitMsg(){ return (rounds.length<=1 ? "Quitter le fil rouge en cours ?" : "Quitter la partie en cours ?") + (scoring ? " Les scores seront perdus." : ""); }
+$("quitGame").onclick=()=>{ if(confirm(quitMsg())) goHome(); };
 $("logout1").onclick=logout;
 
 /* ---------- connexion : UI ---------- */

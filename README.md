@@ -11,17 +11,21 @@ En ligne : https://benoitouiddoo.github.io/Fil-Rouge/
 
 ## Jouer
 
-- **Partie** : 3 fils rouges tirés au hasard × 6 musiques, en équipes, score cumulé.
-- **Solo** : un seul fil rouge (6 musiques), sans équipe ni points — tuile 🎲 *Aléatoire* ou choix du fil rouge.
-- **Durée d'écoute** : 15 s / 30 s / Tout. 15 s et 30 s démarrent au premier tiers du morceau.
-- **Révéler la réponse** : bouton ; automatique en fin de morceau en mode *Tout*.
+L'accueil se lit de haut en bas :
+
+1. **Filtres** (repliés, résumé affiché : « Tous niveaux · Tous genres » ou la sélection) : niveau Facile / Moyen / Difficile et genres. Ce sont des **priorités** : les titres correspondants sortent d'abord, le reste complète la manche.
+2. **On joue comment ?**
+   - **⚡ Partie rapide** : un fil rouge au hasard, 6 musiques, sans équipe ni points.
+   - **👥 Faites des équipes** : équipes (noms mémorisés), points, **1, 3 ou 5 fils rouges**, classement final.
+   - **⏱️ Contre la montre** : tous ensemble, morceau entier ; plus on trouve vite, plus on marque (**10 pts, −1 toutes les 3 s, minimum 1**), bouton « 🙋 Trouvé ! ». 1, 3 ou 5 fils rouges, total indicatif.
+3. **Voir tous les fils rouges** (déroulant) : jouer un fil rouge précis dans le mode choisi.
+
+En jeu :
+- **Durée d'écoute** (hors contre-la-montre) : 15 s / 30 s / Tout (15 s et 30 s démarrent au premier tiers du morceau).
+- **Révéler la réponse** : bouton ; automatique en fin de morceau en mode « Tout » et en contre-la-montre.
 - **💡 Indice** (2 niveaux) : 1) où se cache la réponse (titre / paroles / artiste) ; 2) catégorie, si renseignée.
-- **Pas de réponse en double** dans un même fil rouge (ex. une seule « pluie » par manche).
-- **Anti-répétition** : les fils rouges et musiques déjà joués ne reviennent pas tant qu'un fil rouge
-  n'est pas épuisé (historique par appareil, réinitialisable depuis l'accueil).
-- **Réglages** (mémorisés par appareil) : **niveau** Facile / Moyen / Difficile et **genres** (Pop, Rock, Variété française, Rap, Soul/Funk/R&B, Disco/Électro, Jazz & crooners, Folk/country/reggae/BO). Ce sont des **priorités** : les titres correspondants sortent d'abord, le reste complète la manche.
-- **Bouton retour** (téléphone / navigateur) : en jeu, demande confirmation puis revient à l'accueil ; en fin de partie, revient à l'accueil (ne quitte plus le site).
-- Noms d'équipe mémorisés par appareil. Lien *Quitter la partie* en cours de jeu.
+- **Pas de réponse en double** dans un même fil rouge ; **anti-répétition** par appareil (réinitialisable depuis l'accueil).
+- **Bouton retour** (téléphone / navigateur) : en jeu, confirmation puis retour à l'accueil (ne quitte plus le site).
 
 ## Héberger (GitHub Pages)
 
